@@ -1,0 +1,230 @@
+---
+title: "Oomycete pathogenicity on Corn - Michigan"
+output:
+  html_document:
+    keep_md: yes
+editor_options:
+  chunk_output_type: console
+---
+
+```{r custom_functions, echo=FALSE, message=FALSE}
+#Standard error function
+std <- function(x) sd(x)/sqrt(length(x))
+CVcoeff <- function(x) (sd(x)/mean(x))*100
+
+#Trim spaces
+trim <- function (x) gsub("^\\s+|\\s+$", "", x)
+
+#Arcsine transformation
+asinTr <- function(p) { asin(sqrt(p)) }
+
+# ipak function: install and load multiple R packages.
+# check to see if packages are installed. Install them if they are not, then load them into the R session.
+# Source: https://gist.github.com/stevenworthington/3178163
+ipak <- function(pkg){
+new.pkg <- pkg[!(pkg %in% installed.packages()[,"Package"])]
+if (length(new.pkg)) 
+    install.packages(new.pkg, dependencies = TRUE)
+sapply(pkg, require, character.only = TRUE)
+}
+
+packages <- c("ggplot2","RColorBrewer","grid","gridExtra","plyr","lme4","lsmeans","knitr","tidyr","dplyr", "MASS", "magrittr", "reshape2", "FactoMineR", "cowplot","stringr")
+ipak(packages)
+
+#require(devtools)
+#install_github('vqv/ggbiplot')
+
+setwd("~/Google Drive File Stream/My Drive/MSU/Chilvers Lab/01_Projects/11_Corn_michigan/Pathogenicity/")
+
+```
+
+
+```{r}
+
+#Reading the file
+corn_data <- read.csv(file = "Corn_clean_data.txt", sep = "\t")
+corn_data$species <- trim(corn_data$species)
+corn_data$temp <- factor(corn_data$temp)
+corn_data <-  corn_data %>% filter(species != "litorale")
+
+
+#Summarizing data using different parameters by plyr library
+corn_sum <- ddply(corn_data, c("species","temp"), summarise,
+              N = length(plant.seed),
+              mean_wp = mean(plant.seed), 
+              sd_wp = sd(plant.seed),
+              se_wp = sd_wp/sqrt(N),
+              mean_ph = mean(avg.height), 
+              sd_ph = sd(avg.height),
+              se_ph = sd_ph/sqrt(N)
+              )
+  
+#Setting limits for error bars
+wp_limits <- aes(ymax = mean_wp + se_wp, ymin=mean_wp - se_wp)
+ph_limits <- aes(ymax = mean_ph + se_ph, ymin=mean_ph - se_ph)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+```{r}
+(plot_wp <- ggplot(corn_sum, 
+                   aes(x = reorder(species, mean_wp, median), 
+                       y = mean_wp, 
+                       colour = as.factor(temp))) +
+  geom_point(stat = "identity", size = 3) +
+  geom_errorbar(wp_limits, width=0.2) + 
+  scale_color_manual(values = c("#1f78b4", "#33a02c")) + theme_gray() +
+  theme(axis.text.x=element_text(angle=60, hjust = 1, vjust = 1, face="italic"), 
+        axis.text.y=element_text(angle=90, hjust = 0.5), 
+        plot.margin=unit(c(1,1,1,1), "mm")) +
+  labs(x="Species", y = "Weight per plant (g)", colour = "Temperature (ºC)"))
+```
+
+
+
+
+```{r}
+(plot_ph <- ggplot(corn_sum, 
+                   aes(x = reorder(species, mean_ph, mean), 
+                       y = mean_ph, 
+                       colour = as.factor(temp))) +
+  geom_point(stat = "identity", size = 3) +
+  geom_errorbar(ph_limits, width=0.2) + 
+  scale_color_manual(values = c("#1f78b4", "#33a02c")) + 
+   theme_gray() +
+  theme(axis.text.x=element_text(angle=60, hjust = 1, vjust = 1, face="italic"), 
+        axis.text.y=element_text(angle=90, hjust = 0.5), 
+        plot.margin=unit(c(1,1,1,1), "mm")) +
+  labs(x="Species", y = "Plant height (cm)", colour = "Temperature (ºC)"))
+```
+
+```{r}
+hist(corn_data$avg.height)
+hist(corn_data$plant.seed)
+corn_data$Ht <- sqrt(corn_data$avg.height)
+
+qqnorm(corn_data$plant.seed)
+qqnorm(corn_data$Ht)
+```
+#Plant height 15C
+
+```{r}
+set_15 <- subset(corn_data, corn_data$temp=="15")
+fit.ht <- nlme::lme(Ht ~ species, random = ~1|isolate, method="ML", data=set_15)
+fit1.ht <- nlme::lme(Ht ~ species, random = ~1|set/isolate, method="ML", data=set_15)
+fit2.ht <- nlme::lme(Ht ~ species, random = ~1|set, method="ML", data=set_15)
+anova(fit.ht, fit1.ht, fit2.ht)
+anova(fit1.ht)
+fit.ht.ls <- lsmeans(fit1.ht, "species")
+(fit.ht.ctrl <- contrast(fit.ht.ls, "trt.vs.ctrl", ref=7))
+ht.15 <- data.frame(summary(fit.ht.ctrl)) %>% 
+              separate(contrast, c('species','contrast'), sep = " - ", remove = TRUE)
+ht.15$ht.sg <- ifelse(ht.15$p.value<0.05,"SG","NS")
+
+```
+
+#Plant weight 15C
+```{r}
+set_15 <- subset(corn_data, corn_data$temp=="15")
+fit <- nlme::lme(plant.seed ~ species, random = ~1|isolate, method="ML", data=set_15)
+fit1 <- nlme::lme(plant.seed ~ species, random = ~1|trial/isolate, method="ML", data=set_15)
+fit2 <- nlme::lme(plant.seed ~ species, random = ~1|set, method="ML", data=set_15)
+anova(fit, fit1, fit2)
+anova(fit2)
+fit.ls <- lsmeans(fit2, "species")
+(fit.ctrl <- contrast(fit.ls, "trt.vs.ctrl", ref=7))
+wp.15 <- data.frame(summary(fit.ctrl)) %>% 
+              separate(contrast, c('species','contrast'), sep = " - ", remove = TRUE)
+wp.15$wp.sg <- ifelse(wp.15$p.value<0.05,"SG","NS")
+```
+
+#Plant height 20C
+
+```{r}
+set_20 <- subset(corn_data, corn_data$temp=="20")
+fit.ht.20 <- nlme::lme(Ht ~ species, random = ~1|isolate, method="ML", data=set_20)
+fit1.ht.20 <- nlme::lme(Ht ~ species, random = ~1|set/isolate, method="ML", data=set_20)
+fit2.ht.20 <- nlme::lme(Ht ~ species, random = ~1|set, method="ML", data=set_20)
+anova(fit.ht.20, fit1.ht.20, fit2.ht.20)
+anova(fit2.ht.20)
+fit.ht.ls <- lsmeans(fit2.ht.20, "species")
+(fit.ht.ctrl <- contrast(fit.ht.ls, "trt.vs.ctrl", ref=7))
+ht.20 <- data.frame(summary(fit.ht.ctrl)) %>% 
+              separate(contrast, c('species','contrast'), sep = " - ", remove = TRUE)
+ht.20$ht.sg <- ifelse(ht.20$p.value<0.05,"SG","NS")
+```
+
+#Plant weight 20C
+
+```{r}
+fit.20 <- nlme::lme(plant.seed ~ species, random = ~1|isolate, method="ML", data=set_20)
+fit1.20 <- nlme::lme(plant.seed ~ species, random = ~1|trial/isolate, method="ML", data=set_20)
+fit2.20 <- nlme::lme(plant.seed ~ species, random = ~1|set, method="ML", data=set_20)
+anova(fit.20, fit1.20, fit2.20)
+anova(fit2.20)
+fit.ls <- lsmeans(fit2.20, "species")
+(fit.ctrl <- contrast(fit.ls, "trt.vs.ctrl", ref=7, adjust ="bon"))
+wp.20 <- data.frame(summary(fit.ctrl)) %>% 
+              separate(contrast, c('species','contrast'), sep = " - ", remove = TRUE)
+wp.20$wp.sg <- ifelse(wp.20$p.value<0.05,"SG","NS")
+```
+
+```{r}
+ht.15$temp <- 15
+wp.15$temp <- 15
+ht.20$temp <- 20
+wp.20$temp <- 20
+
+ht <- bind_rows(ht.15, ht.20) %>% dplyr::select(species,temp,ht.sg)
+ht$temp <- as.factor(ht$temp)
+wp <- bind_rows(wp.15, wp.20) %>% dplyr::select(species,temp, wp.sg)
+wp$temp <- as.factor(wp$temp)
+
+corn_final <- full_join(corn_sum, ht, c("species","temp"))
+corn_final <- full_join(corn_final, wp, c("species","temp"))
+
+corn_final[is.na(corn_final)] <- "NS"
+corn_final
+```
+
+```{r}
+
+(plot_wp1 <- ggplot(corn_final, 
+                   aes(x = species, 
+                       y = mean_wp, 
+                       colour = as.factor(temp))) +
+  geom_point(aes(alpha=wp.sg), stat = "identity", size = 3) +
+  geom_errorbar(wp_limits, width=0.2) + guides(alpha=FALSE) +
+  scale_color_manual(values = c("#1f78b4", "#33a02c")) + 
+  scale_alpha_discrete(range = c(0.5, 0.9)) + theme_gray(base_size = 16) +
+  theme(axis.text.x=element_text(angle=60, hjust = 1, vjust = 1, face="italic"), 
+        axis.text.y=element_text(angle=90, hjust = 0.5), 
+        plot.margin=unit(c(1,1,1,1), "mm")) +
+  labs(x="Species", y = "Weight per plant (g)", colour = "Temperature (ºC)"))
+
+spp <- corn_sum %>% filter(temp == 20) %>% 
+                    arrange(mean_wp) %>% 
+                    dplyr::select(species)
+(spp <- spp$species)
+
+plot_wp1$data$species <- factor(plot_wp1$data$species, levels = spp)
+
+plot_wp1
+```
+
+
+```{r}
+(plot_ph1 <- ggplot(corn_final, 
+                   aes(x = reorder(species, mean_ph, mean), 
+                       y = mean_ph, 
+                       colour = as.factor(temp))) +
+  geom_point(aes(alpha=ht.sg), stat = "identity", size = 3) +
+  geom_errorbar(ph_limits, width=0.2) + guides(alpha=FALSE) +
+  scale_color_manual(values = c("#1f78b4", "#33a02c")) + 
+  scale_alpha_discrete(range = c(0.5, 0.9)) + theme_gray(base_size = 16) +
+  theme(axis.text.x=element_text(angle=60, hjust = 1, vjust = 1, face="italic"), 
+        axis.text.y=element_text(angle=90, hjust = 0.5), 
+        plot.margin=unit(c(1,1,1,1), "mm")) +
+  labs(x="Species", y = "Plant height (cm)", colour = "Temperature (ºC)"))
+```
+
