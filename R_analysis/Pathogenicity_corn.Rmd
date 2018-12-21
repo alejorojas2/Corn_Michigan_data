@@ -28,21 +28,17 @@ if (length(new.pkg))
 sapply(pkg, require, character.only = TRUE)
 }
 
-packages <- c("ggplot2","RColorBrewer","grid","gridExtra","plyr","lme4","lsmeans","knitr","tidyr","dplyr", "MASS", "magrittr", "reshape2", "FactoMineR", "cowplot","stringr")
+packages <- c("ggplot2","RColorBrewer","grid","gridExtra","plyr","lme4","lsmeans","knitr","tidyr","dplyr", "MASS", "magrittr", "reshape2", "FactoMineR", "cowplot","stringr", "here", "cowplot")
 ipak(packages)
 
 #require(devtools)
 #install_github('vqv/ggbiplot')
-
-setwd("~/Google Drive File Stream/My Drive/MSU/Chilvers Lab/01_Projects/11_Corn_michigan/Pathogenicity/")
-
 ```
 
 
 ```{r}
-
 #Reading the file
-corn_data <- read.csv(file = "Corn_clean_data.txt", sep = "\t")
+corn_data <- read.csv(file = here("data","Corn_clean_data"), sep = "\t")
 corn_data$species <- trim(corn_data$species)
 corn_data$temp <- factor(corn_data$temp)
 corn_data <-  corn_data %>% filter(species != "litorale")
@@ -189,18 +185,23 @@ corn_final
 
 ```{r}
 
-(plot_wp1 <- ggplot(corn_final, 
+plot_wp1 <- ggplot(corn_final, 
                    aes(x = species, 
                        y = mean_wp, 
                        colour = as.factor(temp))) +
   geom_point(aes(alpha=wp.sg), stat = "identity", size = 3) +
-  geom_errorbar(wp_limits, width=0.2) + guides(alpha=FALSE) +
+  geom_errorbar(wp_limits, width=0.2) + 
   scale_color_manual(values = c("#1f78b4", "#33a02c")) + 
   scale_alpha_discrete(range = c(0.5, 0.9)) + theme_gray(base_size = 16) +
   theme(axis.text.x=element_text(angle=60, hjust = 1, vjust = 1, face="italic"), 
         axis.text.y=element_text(angle=90, hjust = 0.5), 
-        plot.margin=unit(c(1,1,1,1), "mm")) +
-  labs(x="Species", y = "Weight per plant (g)", colour = "Temperature (ºC)"))
+        plot.margin=unit(c(1,1,1,1), "mm"),
+        legend.position = c(0.2 , 0.83),
+        legend.box = "horizontal",
+        legend.background = element_rect(fill="gray95"),
+        legend.key = element_blank()) +
+  labs(x="Species", y = "Weight per plant (g)", colour = "Temperature (ºC)",
+       alpha= "Species vs control")
 
 spp <- corn_sum %>% filter(temp == 20) %>% 
                     arrange(mean_wp) %>% 
@@ -208,23 +209,32 @@ spp <- corn_sum %>% filter(temp == 20) %>%
 (spp <- spp$species)
 
 plot_wp1$data$species <- factor(plot_wp1$data$species, levels = spp)
-
-plot_wp1
 ```
 
 
 ```{r}
-(plot_ph1 <- ggplot(corn_final, 
+plot_ph1 <- ggplot(corn_final, 
                    aes(x = reorder(species, mean_ph, mean), 
                        y = mean_ph, 
                        colour = as.factor(temp))) +
   geom_point(aes(alpha=ht.sg), stat = "identity", size = 3) +
-  geom_errorbar(ph_limits, width=0.2) + guides(alpha=FALSE) +
+  geom_errorbar(ph_limits, width=0.2) + 
   scale_color_manual(values = c("#1f78b4", "#33a02c")) + 
   scale_alpha_discrete(range = c(0.5, 0.9)) + theme_gray(base_size = 16) +
   theme(axis.text.x=element_text(angle=60, hjust = 1, vjust = 1, face="italic"), 
         axis.text.y=element_text(angle=90, hjust = 0.5), 
-        plot.margin=unit(c(1,1,1,1), "mm")) +
-  labs(x="Species", y = "Plant height (cm)", colour = "Temperature (ºC)"))
+        plot.margin=unit(c(1,1,1,1), "mm"),
+        legend.position = c(0.2 , 0.83),
+        legend.box = "horizontal",
+        legend.background = element_rect(fill="gray95"),
+        legend.key = element_blank()) +
+  labs(x="Species", y = "Plant height (cm)", 
+       colour = "Temperature (ºC)", 
+       alpha= "Species vs control")
+```
+
+
+```{r, fig.align="center", fig.width=12, fig.height=15}
+plot_grid(plot_ph1, plot_wp1, labels = c("A","B"), nrow = 2, ncol = 1)
 ```
 
