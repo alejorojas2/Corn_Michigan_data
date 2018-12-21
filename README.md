@@ -20,6 +20,7 @@ Please use the following DOI to cite this data and associated functions/analyses
 Session Info
 ========
 
+```
 R version 3.4.4 (2018-03-15)
 Platform: x86_64-apple-darwin15.6.0 (64-bit)
 Running under: macOS High Sierra 10.13.6
@@ -52,4 +53,4 @@ loaded via a namespace (and not attached):
 [41] scatterplot3d_0.3-41 sandwich_2.5-0       TH.data_1.0-9        tools_3.4.4          glue_1.3.0          
 [46] purrr_0.2.5          survival_2.43-3      yaml_2.2.0           colorspace_1.3-2     cluster_2.0.7-1     
 [51] bindr_0.1.1         
-> 
+```
