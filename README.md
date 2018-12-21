@@ -4,9 +4,10 @@ This repository contains data, code and results for the analysis of oomycetes as
 
 Contents
 ========
-1. [Pathogenicioty and virulence in corn seedlings](R_analysis/Pathogenicity_corn.md)
-2. [Community analysis](analysis/Clone_correction.md)
-3. [Fungicide resistance](analysis/PCA_and_DAPC.md)
+1. [Corn production in Michigana and locations sampled](R_analysis/Corn_samples.md)
+2. [Community analysis](R_analysis/Clone_correction.md)
+3. [Pathogenicity and virulence in corn seedlings](R_analysis/Pathogenicity_corn.md)
+4. [Fungicide resistance](R_analysis/PCA_and_DAPC.md)
 
 
 Citation

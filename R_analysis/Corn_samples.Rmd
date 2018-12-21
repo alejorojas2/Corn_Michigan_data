@@ -1,0 +1,84 @@
+---
+title: "Corn oomycete survey "
+output:
+  html_document:
+    keep_md: yes
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(magrittr)
+library(plyr)
+library(dplyr)
+library(grid)
+library(gridExtra)
+library(knitr)
+library(RColorBrewer)
+library(here)
+
+## Map projection
+library(maps)
+library(mapproj)
+library(maptools)
+library(ggcounty)
+```
+
+## Sampling locations of oomycete survey in Michigan Corn fields in 2011 and 2012
+
+```{r map_projection, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+#Activate map permit
+gpclibPermit()
+
+par(mfrow = c(1,1))
+
+#Read files  with location data for survey and load the file with soybean area planted (Acres)
+fields <- read.csv2(here("data","GIS_CornMI.txt"), header = TRUE,sep = "\t", dec = ".")
+Corn_data2 <- read.table(here("data","CornMI_area-planted_11-12.csv"), 
+                        sep = ",", header = TRUE, colClasses=c(rep("character",19)))
+
+#Reformating data for soy data
+Corn_data2$counties <- paste(Corn_data2$State,Corn_data2$County, sep = ",")
+Corn_data2$region <- paste(Corn_data2$State.ANSI,Corn_data2$County.ANSI, sep = "")
+Corn_data2$counties <- tolower(Corn_data2$counties)
+Corn_data2$value <- as.numeric(gsub(",", "", as.character(Corn_data2$Value)))
+#Remove other data and extracolumn
+Corn_data2 <- Corn_data2[Corn_data2$County != "OTHER (COMBINED) COUNTIES",]
+
+Corn_data2 <- Corn_data2 %>% group_by(region) %>% summarise(value = mean(value))
+
+#Vectors with data for 2011 and 2012
+fields$Year <- as.factor(fields$Year)
+fields.2011 <- fields[fields$Year==2011,]
+fields.2012 <- fields[fields$Year==2012,]
+
+#ggcounty
+Corn_data2$brk <- cut(Corn_data2$value, breaks=c(0, 1, 50000, 100000,200000,300000,700000), 
+                     labels=c("Not Estimated","0-50K","50-100K","100-200K","200-300K","300-700K"))
+
+us_state <- map_data(map = "state")
+us <- ggcounty::ggcounty.us()
+```
+
+
+```{r map_ggplot, echo=FALSE, fig.height=6, fig.width=10, message=FALSE}
+gg <- us$gg
+gg <- gg + geom_map(data=Corn_data2, map=us$map, aes(map_id=region, fill=brk), color="black", size=0.35) + 
+  coord_quickmap(xlim = c(-87,-83), ylim=c(41.8,46)) + 
+  scale_fill_brewer(palette = "BuGn", name="Corn planted acres") #+ 
+    #geom_path(data = us_state, colour="gray15", aes(x=long, y=lat, group=group))
+
+(gg2 <- gg + geom_point(data = fields, aes(x=Long, y=Lat, shape=Year), 
+                       stat = "identity", size=5, fill = "gray45",
+                       position=position_jitter(h=0.1)) + 
+   # geom_point(data = fields, aes(x=Long, y=Lat), stat = "identity", shape=21, stroke=0.8,
+   #           size=2, colour="black", position = position_jitter(h=0.1)) +
+  # scale_colour_manual(values = c("#BBE965","#496BA8")) + 
+  scale_shape_manual(values = c(21,22)) +
+  theme(legend.key = element_blank(),
+        axis.line = element_blank(),
+        plot.margin = unit(c(-20,-10,-10,-10), "mm")))
+```
+
