@@ -4,7 +4,7 @@ This repository contains data, code and results for the analysis of oomycetes as
 
 Contents
 ========
-1. [Corn production in Michigana and locations sampled](R_analysis/Corn_samples.md)
+1. [Corn production in Michigan and locations sampled](R_analysis/Corn_samples.md)
 2. [Community analysis](R_analysis/Clone_correction.md)
 3. [Pathogenicity and virulence in corn seedlings](R_analysis/Pathogenicity_corn.md)
 4. [Fungicide resistance](R_analysis/PCA_and_DAPC.md)
