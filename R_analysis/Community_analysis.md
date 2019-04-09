@@ -9,14 +9,14 @@ editor_options:
 
 
 ```
-##     phyloseq      ggplot2 RColorBrewer         plyr        dplyr 
+##     phyloseq      ggplot2 RColorBrewer         plyr    tidyverse 
 ##         TRUE         TRUE         TRUE         TRUE         TRUE 
-##        tidyr        knitr     magrittr          ape        vegan 
+##        knitr     magrittr          ape        vegan       ggtree 
 ##         TRUE         TRUE         TRUE         TRUE         TRUE 
-##       ggtree      cowplot      ggrepel       gtable    gridExtra 
+##      cowplot      ggrepel       gtable    gridExtra         biom 
 ##         TRUE         TRUE         TRUE         TRUE         TRUE 
-##         biom       ampvis         here 
-##         TRUE         TRUE         TRUE
+##       ampvis         here 
+##         TRUE         TRUE
 ```
 
 ## Importing amplicon data
@@ -31,7 +31,8 @@ CornCOI <- import_biom(Corn_COI_file)
 ```
 
 ```
-## Warning in strsplit(msg, "\n"): input string 1 is invalid in this locale
+## Warning in strsplit(conditionMessage(e), "\n"): input string 1 is invalid
+## in this locale
 ```
 
 ```r
@@ -43,20 +44,6 @@ colnames(tax_table(Corn_COI)) <- c("Phylum","Class","Order",
                                   "Family","Genus","Clade","Species","Kingdom")
 ```
 
-
-## Alpha diversity for amplicon data
-
-
-```r
-#Plotting richness
-alpha.corn <- plot_richness(Corn_COI, "group", 
-              measures = c("InvSimpson","Shannon","Chao1"), color = "Year")
-
-alpha.corn + geom_boxplot() + xlab("Field") + theme_gray() +
-  theme(axis.text.x = element_text(angle = 90))
-```
-
-![](Community_analysis_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
 
 ## Community composition based on amplicon data
 
@@ -113,7 +100,7 @@ data_state <- data_state[with(data_state, order(Clade, as.numeric(Clade))),]
   theme(text = element_text(size = 15)))
 ```
 
-<img src="Community_analysis_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" />
+<img src="Community_analysis_files/figure-html/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
 
 
 ## Culture data: isolation frequency
@@ -140,10 +127,11 @@ corn_ct <- phyloseq(otu_corn_ct, tax_corn_ct, data_corn_ct)
 corn_ct_sp <- psmelt(corn_ct)
 corn_ct2 <- corn_ct_sp %>% group_by(Species, Year) %>% summarise(Abd = sum(Abundance))
 corn_ct2$Year <- as.factor(corn_ct2$Year)
+corn_ct2$Species <- gsub("_"," ", corn_ct2$Species)
 
 (ct_bar_plot <- ggplot(corn_ct2) + 
   geom_bar(aes(x = reorder(Species, Abd, mean), y = Abd, fill = Year), stat = "identity") + 
-  labs(x ="Species", y = "Abundance") +
+  labs(x ="Species", y = "Frequency") +
   coord_flip() +
   scale_fill_manual(values = c("#7fbf7b", "#3288bd")) +
   theme_gray() +
@@ -151,7 +139,7 @@ corn_ct2$Year <- as.factor(corn_ct2$Year)
         axis.text.y = element_text(face = "italic")))
 ```
 
-<img src="Community_analysis_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
+<img src="Community_analysis_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" />
 
 ## Importing culture data and merging data with amplicon phyloseq object
 
@@ -196,6 +184,7 @@ ct_COI_corn_clade <-  ct_COI_corn_clade %>%
   spread(type, Rel.abundance) %>% 
   top_n(n =15, wt = `COI amplicon`) %>%
   gather(type, Rel.abundance, 2:3)
+ct_COI_corn_clade$Clade <- gsub("_"," ", ct_COI_corn_clade$Clade)
 
 (clade.graph <- ggplot(ct_COI_corn_clade) + 
   geom_bar(aes(x = reorder(Clade, Rel.abundance, mean), y = Rel.abundance), stat = "identity") + 
@@ -205,11 +194,11 @@ ct_COI_corn_clade <-  ct_COI_corn_clade %>%
   coord_flip() + 
   theme_gray(base_size = 16) + 
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
-        axis.text.y = element_text(size = 18),
+        axis.text.y = element_text(size = 16),
         strip.text = element_text(face = "bold", size = 20)))
 ```
 
-<img src="Community_analysis_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
+<img src="Community_analysis_files/figure-html/unnamed-chunk-6-1.png" style="display: block; margin: auto;" />
 
 ```r
 ct_COI_corn_genus <- psmelt(ct_COI_corn) %>% 
@@ -224,6 +213,7 @@ ct_COI_corn_genus <-  ct_COI_corn_genus %>%
   spread(type, Rel.abundance) %>% 
   top_n(n=12, wt = `COI amplicon`) %>%
   gather(type, Rel.abundance, 2:3)
+ct_COI_corn_genus$Species <- gsub("_"," ", ct_COI_corn_genus$Species)
 
 (species.graph <- ggplot(ct_COI_corn_genus) + 
   geom_bar(aes(x = reorder(Species, Rel.abundance, mean), 
@@ -238,14 +228,143 @@ ct_COI_corn_genus <-  ct_COI_corn_genus %>%
         strip.text = element_text(face = "bold", size = 20)))
 ```
 
-<img src="Community_analysis_files/figure-html/unnamed-chunk-7-2.png" style="display: block; margin: auto;" />
+<img src="Community_analysis_files/figure-html/unnamed-chunk-6-2.png" style="display: block; margin: auto;" />
+
+
+## Alpha diversity for amplicon data
+
+
+```r
+#Plotting richness
+alpha.corn <- plot_richness(Corn_COI, "group", 
+              measures = c("InvSimpson","Shannon","Chao1"), color = "Year")
+
+alpha.corn + geom_boxplot() + xlab("Field") + theme_gray() +
+  theme(axis.text.x = element_text(angle = 90))
+```
+
+![](Community_analysis_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+
+__Richness table__
+
+
+```r
+#Table richness
+Tb_richness <- estimate_richness(Corn_COI, 
+                                 split = TRUE, 
+                                 c("Observed", "Shannon", "Simpson")) %>% 
+  rownames_to_column(var = "sample") %>%
+  mutate(Evenness = Shannon/log(Observed))
+
+samp_size <- colSums(otu_table(Corn_COI))
+samp_size <- data.frame(samp_size) %>% rownames_to_column(var = "sample")
+
+smp_state <- data.frame(sample_data(Corn_COI)[,71:72]) %>% 
+  rownames_to_column(var = "sample")
+
+Tb_richness_final <- left_join(Tb_richness, samp_size, by = "sample") %>%
+  left_join(smp_state, by = "sample") %>%
+  filter(Observed > 1) %>%
+  ddply(c("group"), summarise, 
+        N = length(sample),
+        #OTUs = sum(samp_size),
+        mean.Observed = mean(Observed),
+        sd.Observed = sd(Observed, na.rm = TRUE),
+        mean.Shannon = mean(Shannon),
+        sd.Shannon = sd(Shannon, na.rm = TRUE),
+        mean.Simpson = mean(Simpson),
+        sd.Simpson = sd(Simpson, na.rm = TRUE),
+        mean.Evenness = mean(Shannon/log(Observed)),
+        sd.Evenness = sd(Shannon/log(Observed), na.rm = TRUE))
+
+kable(Tb_richness_final, digits = 3, format = "markdown")
+```
+
+
+
+|group   |  N| mean.Observed| sd.Observed| mean.Shannon| sd.Shannon| mean.Simpson| sd.Simpson| mean.Evenness| sd.Evenness|
+|:-------|--:|-------------:|-----------:|------------:|----------:|------------:|----------:|-------------:|-----------:|
+|MICO_2  |  3|       290.333|     106.265|        4.073|      0.187|        0.912|      0.006|         0.725|       0.018|
+|MICO_3  |  3|       385.000|      44.508|        4.254|      0.206|        0.933|      0.011|         0.715|       0.023|
+|MICO_4  |  3|       217.000|      53.842|        3.995|      0.419|        0.931|      0.027|         0.744|       0.053|
+|MICO_5  |  3|       403.667|     145.029|        4.392|      0.151|        0.962|      0.007|         0.740|       0.054|
+|MICO_6  |  3|       232.667|      13.317|        4.475|      0.045|        0.976|      0.002|         0.821|       0.008|
+|MICO2_1 |  3|       480.000|      36.166|        4.648|      0.054|        0.955|      0.007|         0.753|       0.012|
+|MICO2_2 |  3|       284.000|     103.966|        4.309|      0.050|        0.952|      0.021|         0.770|       0.044|
+|MICO2_3 |  3|       315.000|      52.716|        4.901|      0.166|        0.979|      0.007|         0.853|       0.007|
+|MICO2_4 |  3|       413.000|      56.045|        4.734|      0.175|        0.968|      0.016|         0.787|       0.036|
+|MICO2_5 |  3|       615.000|      32.187|        4.973|      0.083|        0.964|      0.005|         0.775|       0.011|
+
+### ANOSIM
+
+
+```r
+Yr_grp <- get_variable(Corn_COI, "Year")
+(Corn_yr_anosim <- anosim(phyloseq::distance(Corn_COI, "bray"), Yr_grp))
+```
+
+```
+## 
+## Call:
+## anosim(x = phyloseq::distance(Corn_COI, "bray"), grouping = Yr_grp) 
+## Dissimilarity: bray 
+## 
+## ANOSIM statistic R: 0.1128 
+##       Significance: 0.045 
+## 
+## Permutation: free
+## Number of permutations: 999
+```
+
+```r
+field_grp <- get_variable(Corn_COI, "group")
+(Corn_grp_anosim <- anosim(phyloseq::distance(Corn_COI, "bray"), field_grp))
+```
+
+```
+## 
+## Call:
+## anosim(x = phyloseq::distance(Corn_COI, "bray"), grouping = field_grp) 
+## Dissimilarity: bray 
+## 
+## ANOSIM statistic R: 0.9969 
+##       Significance: 0.001 
+## 
+## Permutation: free
+## Number of permutations: 999
+```
+
 
 ## Beta diversity
+
+### ADONIS
+
+
+```r
+df <- as(sample_data(Corn_COI), "data.frame")
+d <- phyloseq::distance(Corn_COI, "bray")
+
+Corn_adonis <- adonis(d ~ Year, df)
+
+kable(Corn_adonis$aov.tab, digits = 3, 
+      caption = "__Table .__ Comparison of community structure (beta diversity)\
+      using Bray-curtis distance by year.", format = "markdown")
+```
+
+
+
+|          | Df| SumsOfSqs| MeanSqs| F.Model|    R2| Pr(>F)|
+|:---------|--:|---------:|-------:|-------:|-----:|------:|
+|Year      |  1|     0.791|   0.791|   2.318| 0.076|  0.004|
+|Residuals | 28|     9.561|   0.341|      NA| 0.924|     NA|
+|Total     | 29|    10.353|      NA|      NA| 1.000|     NA|
+
 
 ### Ordination analysis for culture and amplicon
 
 
 ```r
+##Colors
 colors2 <- c("#77C7C6",
 "#C37F3B",
 "#869BCF",
@@ -258,9 +377,11 @@ colors2 <- c("#77C7C6",
 "#698547",
 "#D3C1A7",
 "#6ca556")
+
+##Year as factor
 sample_data(ct_COI_corn)$Year <- as.factor(sample_data(ct_COI_corn)$Year)
 
-#Beta diversity culture and amplicon
+##Beta diversity culture and amplicon
 Oom_biom_ord <- ordinate(ct_COI_corn, "PCoA", "bray")
 ord_plot <- plot_ordination(ct_COI_corn, Oom_biom_ord, color = "Year", shape = "type")
 (ord_plot.COI <- ord_plot + geom_point(size = 5, alpha = 0.7) + 
@@ -289,7 +410,7 @@ ord_plot2 <- plot_ordination(Corn_COI_top100, Oom_biom_ord2, color = "group", sh
         legend.key.size = unit(0.9, "cm")))
 ```
 
-![](Community_analysis_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+![](Community_analysis_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
 
 ### Environmental/Edaphic factor analysis
 
@@ -345,16 +466,16 @@ Corn seedlings", format = "markdown")
 |Env.var         | Axis.1| Axis.2| Oom_env.vectors.r| Oom_env.vectors.pvals|
 |:---------------|------:|------:|-----------------:|---------------------:|
 |Clay            |  0.702|  0.016|             0.494|                 0.001|
+|OrgMatter       | -0.386|  0.514|             0.413|                 0.001|
 |WC3rdbar        |  0.814|  0.105|             0.673|                 0.001|
 |pHwater         |  0.489| -0.488|             0.478|                 0.001|
-|OrgMatter       | -0.386|  0.514|             0.413|                 0.003|
-|Db3rdbar        |  0.437| -0.439|             0.383|                 0.006|
-|AWC             | -0.014|  0.587|             0.344|                 0.007|
-|CEC7            | -0.322|  0.464|             0.319|                 0.009|
-|Precip_2011     | -0.431|  0.022|             0.186|                 0.064|
-|EC              | -0.001| -0.409|             0.167|                 0.068|
-|Precip_30yr_avg | -0.304| -0.252|             0.156|                 0.093|
-|Precip_2012     |  0.073|  0.074|             0.011|                 0.865|
+|Db3rdbar        |  0.437| -0.439|             0.383|                 0.002|
+|AWC             | -0.014|  0.587|             0.344|                 0.005|
+|CEC7            | -0.322|  0.464|             0.319|                 0.008|
+|Precip_2011     | -0.431|  0.022|             0.186|                 0.066|
+|EC              | -0.001| -0.409|             0.167|                 0.069|
+|Precip_30yr_avg | -0.304| -0.252|             0.156|                 0.117|
+|Precip_2012     |  0.073|  0.074|             0.011|                 0.847|
 |ECEC            |  0.000|  0.000|             0.000|                 1.000|
 
 ### Results ordination and environmental data
@@ -406,5 +527,5 @@ amp_heatmap(data = Corn_COI.f,
             tax.add = "Clade")
 ```
 
-<img src="Community_analysis_files/figure-html/unnamed-chunk-9-1.png" style="display: block; margin: auto;" />
+<img src="Community_analysis_files/figure-html/unnamed-chunk-12-1.png" style="display: block; margin: auto;" />
 

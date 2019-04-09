@@ -20,8 +20,8 @@ sapply(pkg, require, character.only = TRUE)
 }
 
 #Loading packages
-packages <- c("phyloseq","ggplot2","RColorBrewer","plyr","dplyr",
-              "tidyr","knitr","magrittr","ape","vegan", "ggtree", 
+packages <- c("phyloseq","ggplot2","RColorBrewer","plyr","tidyverse",
+              "knitr","magrittr","ape","vegan", "ggtree", 
               "cowplot", "ggrepel", "gtable", "gridExtra", "biom", "ampvis", "here")
 ipak(packages)
 
@@ -47,17 +47,6 @@ colnames(tax_table(Corn_COI)) <- c("Phylum","Class","Order",
                                   "Family","Genus","Clade","Species","Kingdom")
 ```
 
-
-## Alpha diversity for amplicon data
-
-```{r, warning=FALSE}
-#Plotting richness
-alpha.corn <- plot_richness(Corn_COI, "group", 
-              measures = c("InvSimpson","Shannon","Chao1"), color = "Year")
-
-alpha.corn + geom_boxplot() + xlab("Field") + theme_gray() +
-  theme(axis.text.x = element_text(angle = 90))
-```
 
 ## Community composition based on amplicon data
 
@@ -216,11 +205,84 @@ ct_COI_corn_genus$Species <- gsub("_"," ", ct_COI_corn_genus$Species)
         strip.text = element_text(face = "bold", size = 20)))
 ```
 
+
+## Alpha diversity for amplicon data
+
+```{r, warning=FALSE}
+#Plotting richness
+alpha.corn <- plot_richness(Corn_COI, "group", 
+              measures = c("InvSimpson","Shannon","Chao1"), color = "Year")
+
+alpha.corn + geom_boxplot() + xlab("Field") + theme_gray() +
+  theme(axis.text.x = element_text(angle = 90))
+```
+
+__Richness table__
+
+```{r}
+#Table richness
+Tb_richness <- estimate_richness(Corn_COI, 
+                                 split = TRUE, 
+                                 c("Observed", "Shannon", "Simpson")) %>% 
+  rownames_to_column(var = "sample") %>%
+  mutate(Evenness = Shannon/log(Observed))
+
+samp_size <- colSums(otu_table(Corn_COI))
+samp_size <- data.frame(samp_size) %>% rownames_to_column(var = "sample")
+
+smp_state <- data.frame(sample_data(Corn_COI)[,71:72]) %>% 
+  rownames_to_column(var = "sample")
+
+Tb_richness_final <- left_join(Tb_richness, samp_size, by = "sample") %>%
+  left_join(smp_state, by = "sample") %>%
+  filter(Observed > 1) %>%
+  ddply(c("group"), summarise, 
+        N = length(sample),
+        #OTUs = sum(samp_size),
+        mean.Observed = mean(Observed),
+        sd.Observed = sd(Observed, na.rm = TRUE),
+        mean.Shannon = mean(Shannon),
+        sd.Shannon = sd(Shannon, na.rm = TRUE),
+        mean.Simpson = mean(Simpson),
+        sd.Simpson = sd(Simpson, na.rm = TRUE),
+        mean.Evenness = mean(Shannon/log(Observed)),
+        sd.Evenness = sd(Shannon/log(Observed), na.rm = TRUE))
+
+kable(Tb_richness_final, digits = 3, format = "markdown")
+```
+
+### ANOSIM
+
+```{r}
+Yr_grp <- get_variable(Corn_COI, "Year")
+(Corn_yr_anosim <- anosim(phyloseq::distance(Corn_COI, "bray"), Yr_grp))
+
+field_grp <- get_variable(Corn_COI, "group")
+(Corn_grp_anosim <- anosim(phyloseq::distance(Corn_COI, "bray"), field_grp))
+```
+
+
 ## Beta diversity
+
+### ADONIS
+
+```{r}
+df <- as(sample_data(Corn_COI), "data.frame")
+d <- phyloseq::distance(Corn_COI, "bray")
+
+Corn_adonis <- adonis(d ~ Year, df)
+
+kable(Corn_adonis$aov.tab, digits = 3, 
+      caption = "__Table .__ Comparison of community structure (beta diversity)\
+      using Bray-curtis distance by year.", format = "markdown")
+```
+
 
 ### Ordination analysis for culture and amplicon
 
 ```{r Ordination_plot}
+
+##Colors
 colors2 <- c("#77C7C6",
 "#C37F3B",
 "#869BCF",
@@ -233,9 +295,11 @@ colors2 <- c("#77C7C6",
 "#698547",
 "#D3C1A7",
 "#6ca556")
+
+##Year as factor
 sample_data(ct_COI_corn)$Year <- as.factor(sample_data(ct_COI_corn)$Year)
 
-#Beta diversity culture and amplicon
+##Beta diversity culture and amplicon
 Oom_biom_ord <- ordinate(ct_COI_corn, "PCoA", "bray")
 ord_plot <- plot_ordination(ct_COI_corn, Oom_biom_ord, color = "Year", shape = "type")
 (ord_plot.COI <- ord_plot + geom_point(size = 5, alpha = 0.7) + 

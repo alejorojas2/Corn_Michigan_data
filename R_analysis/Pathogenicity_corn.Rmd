@@ -35,6 +35,7 @@ ipak(packages)
 #install_github('vqv/ggbiplot')
 ```
 
+Reading raw data and summarizing data by measurement:
 
 ```{r}
 #Reading the file
@@ -60,7 +61,7 @@ wp_limits <- aes(ymax = mean_wp + se_wp, ymin=mean_wp - se_wp)
 ph_limits <- aes(ymax = mean_ph + se_ph, ymin=mean_ph - se_ph)
 ```
 
-
+Initial plot of the wieght per plant:
 
 ```{r}
 (plot_wp <- ggplot(corn_sum, 
@@ -77,7 +78,7 @@ ph_limits <- aes(ymax = mean_ph + se_ph, ymin=mean_ph - se_ph)
 ```
 
 
-
+Initial plot of plant height:
 
 ```{r}
 (plot_ph <- ggplot(corn_sum, 
@@ -94,6 +95,9 @@ ph_limits <- aes(ymax = mean_ph + se_ph, ymin=mean_ph - se_ph)
   labs(x="Species", y = "Plant height (cm)", colour = "Temperature (ºC)"))
 ```
 
+
+Checking the normality of the data:
+
 ```{r}
 hist(corn_data$avg.height)
 hist(corn_data$plant.seed)
@@ -102,6 +106,7 @@ corn_data$Ht <- sqrt(corn_data$avg.height)
 qqnorm(corn_data$plant.seed)
 qqnorm(corn_data$Ht)
 ```
+
 #Plant height 15C
 
 ```{r}
@@ -120,6 +125,7 @@ ht.15$ht.sg <- ifelse(ht.15$p.value<0.05,"SG","NS")
 ```
 
 #Plant weight 15C
+
 ```{r}
 set_15 <- subset(corn_data, corn_data$temp=="15")
 fit <- nlme::lme(plant.seed ~ species, random = ~1|isolate, method="ML", data=set_15)
@@ -165,6 +171,8 @@ wp.20 <- data.frame(summary(fit.ctrl)) %>%
 wp.20$wp.sg <- ifelse(wp.20$p.value<0.05,"SG","NS")
 ```
 
+Combining data into a single dataset after analysis of variance:
+
 ```{r}
 ht.15$temp <- 15
 wp.15$temp <- 15
@@ -182,6 +190,8 @@ corn_final <- full_join(corn_final, wp, c("species","temp"))
 corn_final[is.na(corn_final)] <- "NS"
 corn_final
 ```
+
+Plot of weight per plant indicating significance, samples were sorted based mean weight at 20C:
 
 ```{r}
 
@@ -212,6 +222,7 @@ plot_wp1$data$species <- factor(plot_wp1$data$species, levels = spp)
 plot_wp1
 ```
 
+Plot for plant height including significance, in this case samples were sorted by overall plant height:
 
 ```{r}
 (plot_ph1 <- ggplot(corn_final, 
@@ -234,6 +245,7 @@ plot_wp1
        shape= "Species vs control"))
 ```
 
+Using `cowplot` to arrange the final figure:
 
 ```{r, fig.align="center", fig.width=12, fig.height=15}
 plot_grid(plot_ph1, plot_wp1, labels = c("A","B"), nrow = 2, ncol = 1)
