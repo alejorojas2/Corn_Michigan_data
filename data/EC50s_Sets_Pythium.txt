@@ -1,0 +1,123 @@
+isolate	species 	clade	chem 	RelEC50 	time pt
+MICO_4-15	aff. torulosum 	B	ethaboxam 	12.72803322	24
+MICO_6-21	aff. torulosum 	B	ethaboxam 	259.685679	24
+C-MICO2_1-13	aff. torulosum 	B	ethaboxam 	783.7980885	24
+MICO_5-36	aff. torulosum 	B	ethaboxam 	3700.556164	24
+MICO_5-8	arrhenomanes	B	ethaboxam 	0.022131813	48
+MICO_2-30	inflatum	B	ethaboxam 	0.193502687	48
+MICO_1-3	inflatum	B	ethaboxam 	0.197906473	24
+C-MICO2_1-10	inflatum	B	ethaboxam 	0.296983964	24
+MICO_3-1	inflatum	B	ethaboxam 	0.328021266	48
+ILSO_5-49B	oopapillum 	B	ethaboxam 	0.719412534	24
+MICO_5-23	periilum	B	ethaboxam 	0.203980663	24
+MICO_6-36	periilum	B	ethaboxam 	0.41002657	24
+MICO_5-3	periilum	B	ethaboxam 	0.581756173	24
+MICO_6-8	tardicrescens	B	ethaboxam 	0.201667075	24
+MICO_6-11	tardicrescens	B	ethaboxam 	0.239869484	24
+MICO_6-23	tardicrescens	B	ethaboxam 	0.26960069	24
+MICO_5-13	tardicrescens	B	ethaboxam 	0.27122705	24
+MICO_2-14	aff. dissotocum 	B2a 	ethaboxam 	0.102942568	24
+MICO_3-46	aff. dissotocum 	B2a 	ethaboxam 	0.871246407	24
+C-MICO2_1-18	aff. dissotocum 	B2a 	ethaboxam 	0.634981394	48
+MICO_4-6	lutarium	B2a 	ethaboxam 	0.051024176	24
+MICO_3-11	lutarium	B2a 	ethaboxam 	0.070028367	24
+MICO_3-21	lutarium	B2a 	ethaboxam 	1.672905465	24
+MICO_3-26	lutarium	B2a 	ethaboxam 	5.444938766	48
+MICO_6-7	acanthicum 	D	ethaboxam 	0.58894671	24
+MICO_6-9	amasculinum	D	ethaboxam 	0.841455203	24
+MICO_6-20	amasculinum	D	ethaboxam 	1.324102788	24
+V-MICO2_3-10	pleroticum	E	ethaboxam 	0.277059471	24
+MICO_4-5	pleroticum	E	ethaboxam 	0.679511796	24
+C-MICO2_3-15	rostratifingens	E	ethaboxam 	14.36675217	48
+C-MICO2_3-11	rostratifingens	E	ethaboxam 	1276.850644	48
+C-MICO2_3-17	rostratifingens	E	ethaboxam 	1.93249E+35	48
+MICO_4-14	attrantheridium	F	ethaboxam 	0.363090595	48
+C-MICO2_3-19	irregulare	F	ethaboxam 	0.128007083	24
+C-MICO2_5-15	irregulare	F	ethaboxam 	0.242767754	24
+C-MICO2_1-6	irregulare	F	ethaboxam 	0.29004608	48
+MISO_11-6	irregulare	F	ethaboxam 	2.041834323	48
+C-MICO2_1-23	sylvaticum	F	ethaboxam 	0.088285219	24
+C-MICO2_1-1	sylvaticum	F	ethaboxam 	0.137349158	24
+MICO_2-50	sylvaticum	F	ethaboxam 	1.872565424	48
+MICO_6-6	heterothallicum	I	ethaboxam 	0.838627308	24
+C-MICO2_3-10	heterothallicum	I	ethaboxam 	0.962560421	48
+C-MICO2_1-20	heterothallicum	I	ethaboxam 	1.109920058	48
+MICO_1-5	ultimum var. ultimum	I	ethaboxam 	0.205167232	24
+C-MICO2_4-22	ultimum var. ultimum	I	ethaboxam 	0.267216333	24
+V-MICO2_2-9	ultimum var. ultimum	I	ethaboxam 	0.547910975	24
+V-MICO2_2-19	ultimum var. ultimum	I	ethaboxam 	0.871226346	24
+C-MICO2_2-7	ultimum var. ultimum	I	ethaboxam 	1.429529428	24
+V-MICO2_2-14	ultimum	I	ethaboxam 	0.0978399	24
+MICO_1-4	ultimum	I	ethaboxam 	0.140004502	48
+MICO_5-14	orthogonon 	J	ethaboxam 	0.077539679	24
+MICO_5-37	orthogonon 	J	ethaboxam 	0.095096602	24
+C-MICO2_5-6	orthogonon 	J	ethaboxam 	0.464398705	48
+MICO_3-35	perplexum	J	ethaboxam 	0.079302705	24
+MICO_3-33	perplexum	J	ethaboxam 	0.13668473	48
+C-MICO2_1-14	perplexum	J	ethaboxam 	1.108039646	48
+MICO_2-24	litorale	K	ethaboxam 	3.391021942	48
+MICO_3-28	Phy. sansomeana	Phytoph Clade 8	ethaboxam 	0.125447497	24
+MICO_3-15	Phy. sansomeana	Phytoph Clade 8	ethaboxam 	0.220623617	48
+MICO_3-24	Phy. sansomeana	Phytoph Clade 8	ethaboxam 	0.223164957	48
+MICO_6-5	periilum	B	ethaboxam 	0.227888285	24
+C-MICO2_1-13	aff. torulosum 	B	mefenoxam 	0.120367433	24
+MICO_4-15	aff. torulosum 	B	mefenoxam 	0.074031406	24
+MICO_5-36	aff. torulosum 	B	mefenoxam 	0.115706565	24
+MICO_6-21	aff. torulosum 	B	mefenoxam 	0.069478911	24
+MICO_5-8	arrhenomanes	B	mefenoxam 	0.009884643	48
+C-MICO2_1-10	inflatum	B	mefenoxam 	1.302621074	48
+MICO_1-3	inflatum	B	mefenoxam 	0.033678132	24
+MICO_2-30	inflatum	B	mefenoxam 	0.703990826	48
+MICO_3-1	inflatum	B	mefenoxam 	0.509756767	48
+ILSO_5-49B	oopapillum 	B	mefenoxam 	0.118846118	24
+MICO_5-23	periilum	B	mefenoxam 	0.094199587	24
+MICO_5-3	periilum	B	mefenoxam 	0.142500045	24
+MICO_6-36	periilum	B	mefenoxam 	0.040202772	24
+MICO_5-13	tardicrescens	B	mefenoxam 	0.095082151	24
+MICO_6-11	tardicrescens	B	mefenoxam 	0.092509429	24
+MICO_6-23	tardicrescens	B	mefenoxam 	0.384900965	48
+MICO_6-8	tardicrescens	B	mefenoxam 	0.104213504	24
+MICO_2-14	aff. dissotocum 	B2a 	mefenoxam 	0.058492475	24
+MICO_3-46	aff. dissotocum 	B2a 	mefenoxam 	0.132375008	24
+C-MICO2_1-18	aff. dissotocum 	B2a 	mefenoxam 	0.577845852	48
+MICO_3-11	lutarium	B2a 	mefenoxam 	0.228468852	48
+MICO_3-21	lutarium	B2a 	mefenoxam 	1.09038985	48
+MICO_4-6	lutarium	B2a 	mefenoxam 	0.381710406	48
+MICO_3-26	lutarium	B2a 	mefenoxam 	7.741401637	48
+MICO_6-7	acanthicum 	D	mefenoxam 	0.073869983	24
+MICO_6-20	amasculinum	D	mefenoxam 	0.064258858	24
+MICO_6-9	amasculinum	D	mefenoxam 	0.110262796	24
+MICO_4-5	pleroticum	E	mefenoxam 	0.085348914	24
+V-MICO2_3-10	pleroticum	E	mefenoxam 	0.017583041	48
+C-MICO2_3-11	rostratifingens	E	mefenoxam 	0.008533614	48
+C-MICO2_3-15	rostratifingens	E	mefenoxam 	0.218268468	48
+C-MICO2_3-17	rostratifingens	E	mefenoxam 	0.023714665	48
+MICO_4-14	attrantheridium	F	mefenoxam 	0.08245652	48
+C-MICO2_1-6	irregulare	F	mefenoxam 	0.03183655	48
+C-MICO2_3-19	irregulare	F	mefenoxam 	0.02991314	24
+C-MICO2_5-15	irregulare	F	mefenoxam 	0.092901131	24
+MISO_11-6	irregulare	F	mefenoxam 	1.655632336	48
+C-MICO_1-23	sylvaticum	F	mefenoxam 	0.177604105	24
+C-MICO2_1-1	sylvaticum	F	mefenoxam 	0.040316702	24
+MICO_2-50	sylvaticum	F	mefenoxam 	0.992770812	48
+C-MICO2_1-20	heterothallicum	I	mefenoxam 	0.043093523	24
+C-MICO2_3-10	heterothallicum	I	mefenoxam 	0.021219249	24
+MICO_6-6	heterothallicum	I	mefenoxam 	0.020660128	24
+C-MICO_2-7	ultimum var. ultimum	I	mefenoxam 	85.62989274	24
+C-MICO2_4-22	ultimum var. ultimum	I	mefenoxam 	0.20068504	24
+MICO_1-5	ultimum var. ultimum	I	mefenoxam 	0.074294729	24
+V-MICO2_2-19	ultimum var. ultimum	I	mefenoxam 	2.76802E+14	24
+V-MICO2_2-9	ultimum var. ultimum	I	mefenoxam 	2.69168E+33	24
+MICO_1-4	ultimum	I	mefenoxam 	0.472184797	24
+V-MICO2_2-14	ultimum	I	mefenoxam 	0.1308543	24
+C-MICO2_5-6	orthogonon 	J	mefenoxam 	0.122402419	48
+MICO_5-14	orthogonon 	J	mefenoxam 	0.469633426	48
+MICO_5-37	orthogonon 	J	mefenoxam 	0.12723717	24
+MICO_3-33	perplexum	J	mefenoxam 	0.709066553	48
+MICO_3-35	perplexum	J	mefenoxam 	0.458915789	48
+C-MICO2_1-14	perplexum	J	mefenoxam 	0.938974936	48
+MICO_2-24	litorale	K	mefenoxam 	0.091067203	24
+MICO_3-15	Phy. sansomeana	Phytoph Clade 8	mefenoxam 	0.106785184	24
+MICO_3-24	Phy. sansomeana	Phytoph Clade 8	mefenoxam 	0.094823286	24
+MICO_3-28	Phy. sansomeana	Phytoph Clade 8	mefenoxam 	0.036089511	24
+MICO_6-5	periilum	B	mefenoxam 	0.097577346	24

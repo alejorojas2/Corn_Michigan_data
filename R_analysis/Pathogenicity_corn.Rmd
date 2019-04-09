@@ -41,7 +41,7 @@ ipak(packages)
 corn_data <- read.csv(file = here("data","Corn_clean_data"), sep = "\t")
 corn_data$species <- trim(corn_data$species)
 corn_data$temp <- factor(corn_data$temp)
-corn_data <-  corn_data %>% filter(species != "litorale")
+corn_data <-  corn_data %>% filter(species != "P. litorale")
 
 
 #Summarizing data using different parameters by plyr library
@@ -60,7 +60,7 @@ wp_limits <- aes(ymax = mean_wp + se_wp, ymin=mean_wp - se_wp)
 ph_limits <- aes(ymax = mean_ph + se_ph, ymin=mean_ph - se_ph)
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
 
 ```{r}
 (plot_wp <- ggplot(corn_sum, 
@@ -112,7 +112,7 @@ fit2.ht <- nlme::lme(Ht ~ species, random = ~1|set, method="ML", data=set_15)
 anova(fit.ht, fit1.ht, fit2.ht)
 anova(fit1.ht)
 fit.ht.ls <- lsmeans(fit1.ht, "species")
-(fit.ht.ctrl <- contrast(fit.ht.ls, "trt.vs.ctrl", ref=7))
+(fit.ht.ctrl <- contrast(fit.ht.ls, "trt.vs.ctrl", ref=2))
 ht.15 <- data.frame(summary(fit.ht.ctrl)) %>% 
               separate(contrast, c('species','contrast'), sep = " - ", remove = TRUE)
 ht.15$ht.sg <- ifelse(ht.15$p.value<0.05,"SG","NS")
@@ -128,7 +128,7 @@ fit2 <- nlme::lme(plant.seed ~ species, random = ~1|set, method="ML", data=set_1
 anova(fit, fit1, fit2)
 anova(fit2)
 fit.ls <- lsmeans(fit2, "species")
-(fit.ctrl <- contrast(fit.ls, "trt.vs.ctrl", ref=7))
+(fit.ctrl <- contrast(fit.ls, "trt.vs.ctrl", ref=2))
 wp.15 <- data.frame(summary(fit.ctrl)) %>% 
               separate(contrast, c('species','contrast'), sep = " - ", remove = TRUE)
 wp.15$wp.sg <- ifelse(wp.15$p.value<0.05,"SG","NS")
@@ -144,7 +144,7 @@ fit2.ht.20 <- nlme::lme(Ht ~ species, random = ~1|set, method="ML", data=set_20)
 anova(fit.ht.20, fit1.ht.20, fit2.ht.20)
 anova(fit2.ht.20)
 fit.ht.ls <- lsmeans(fit2.ht.20, "species")
-(fit.ht.ctrl <- contrast(fit.ht.ls, "trt.vs.ctrl", ref=7))
+(fit.ht.ctrl <- contrast(fit.ht.ls, "trt.vs.ctrl", ref=2))
 ht.20 <- data.frame(summary(fit.ht.ctrl)) %>% 
               separate(contrast, c('species','contrast'), sep = " - ", remove = TRUE)
 ht.20$ht.sg <- ifelse(ht.20$p.value<0.05,"SG","NS")
@@ -159,7 +159,7 @@ fit2.20 <- nlme::lme(plant.seed ~ species, random = ~1|set, method="ML", data=se
 anova(fit.20, fit1.20, fit2.20)
 anova(fit2.20)
 fit.ls <- lsmeans(fit2.20, "species")
-(fit.ctrl <- contrast(fit.ls, "trt.vs.ctrl", ref=7, adjust ="bon"))
+(fit.ctrl <- contrast(fit.ls, "trt.vs.ctrl", ref=2, adjust ="bon"))
 wp.20 <- data.frame(summary(fit.ctrl)) %>% 
               separate(contrast, c('species','contrast'), sep = " - ", remove = TRUE)
 wp.20$wp.sg <- ifelse(wp.20$p.value<0.05,"SG","NS")
@@ -185,14 +185,14 @@ corn_final
 
 ```{r}
 
-plot_wp1 <- ggplot(corn_final, 
-                   aes(x = species, 
+(plot_wp1 <- ggplot(corn_final, 
+                   aes(x = species, #reorder(species, mean_wp, mean), 
                        y = mean_wp, 
                        colour = as.factor(temp))) +
-  geom_point(aes(alpha=wp.sg), stat = "identity", size = 3) +
+  geom_point(aes(shape=wp.sg), stat = "identity", size = 3) +
   geom_errorbar(wp_limits, width=0.2) + 
   scale_color_manual(values = c("#1f78b4", "#33a02c")) + 
-  scale_alpha_discrete(range = c(0.5, 0.9)) + theme_gray(base_size = 16) +
+  scale_shape_manual(values=c(21,19)) + theme_gray(base_size = 16) +
   theme(axis.text.x=element_text(angle=60, hjust = 1, vjust = 1, face="italic"), 
         axis.text.y=element_text(angle=90, hjust = 0.5), 
         plot.margin=unit(c(1,1,1,1), "mm"),
@@ -201,7 +201,7 @@ plot_wp1 <- ggplot(corn_final,
         legend.background = element_rect(fill="gray95"),
         legend.key = element_blank()) +
   labs(x="Species", y = "Weight per plant (g)", colour = "Temperature (ºC)",
-       alpha= "Species vs control")
+       shape= "Species vs control"))
 
 spp <- corn_sum %>% filter(temp == 20) %>% 
                     arrange(mean_wp) %>% 
@@ -209,18 +209,19 @@ spp <- corn_sum %>% filter(temp == 20) %>%
 (spp <- spp$species)
 
 plot_wp1$data$species <- factor(plot_wp1$data$species, levels = spp)
+plot_wp1
 ```
 
 
 ```{r}
-plot_ph1 <- ggplot(corn_final, 
+(plot_ph1 <- ggplot(corn_final, 
                    aes(x = reorder(species, mean_ph, mean), 
                        y = mean_ph, 
                        colour = as.factor(temp))) +
-  geom_point(aes(alpha=ht.sg), stat = "identity", size = 3) +
+  geom_point(aes(shape=ht.sg), stat = "identity", size = 3) +
   geom_errorbar(ph_limits, width=0.2) + 
   scale_color_manual(values = c("#1f78b4", "#33a02c")) + 
-  scale_alpha_discrete(range = c(0.5, 0.9)) + theme_gray(base_size = 16) +
+  scale_shape_manual(values=c(21,19), ) + theme_gray(base_size = 16) +
   theme(axis.text.x=element_text(angle=60, hjust = 1, vjust = 1, face="italic"), 
         axis.text.y=element_text(angle=90, hjust = 0.5), 
         plot.margin=unit(c(1,1,1,1), "mm"),
@@ -230,7 +231,7 @@ plot_ph1 <- ggplot(corn_final,
         legend.key = element_blank()) +
   labs(x="Species", y = "Plant height (cm)", 
        colour = "Temperature (ºC)", 
-       alpha= "Species vs control")
+       shape= "Species vs control"))
 ```
 
 

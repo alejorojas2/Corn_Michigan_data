@@ -122,10 +122,11 @@ corn_ct <- phyloseq(otu_corn_ct, tax_corn_ct, data_corn_ct)
 corn_ct_sp <- psmelt(corn_ct)
 corn_ct2 <- corn_ct_sp %>% group_by(Species, Year) %>% summarise(Abd = sum(Abundance))
 corn_ct2$Year <- as.factor(corn_ct2$Year)
+corn_ct2$Species <- gsub("_"," ", corn_ct2$Species)
 
 (ct_bar_plot <- ggplot(corn_ct2) + 
   geom_bar(aes(x = reorder(Species, Abd, mean), y = Abd, fill = Year), stat = "identity") + 
-  labs(x ="Species", y = "Abundance") +
+  labs(x ="Species", y = "Frequency") +
   coord_flip() +
   scale_fill_manual(values = c("#7fbf7b", "#3288bd")) +
   theme_gray() +
@@ -174,6 +175,7 @@ ct_COI_corn_clade <-  ct_COI_corn_clade %>%
   spread(type, Rel.abundance) %>% 
   top_n(n =15, wt = `COI amplicon`) %>%
   gather(type, Rel.abundance, 2:3)
+ct_COI_corn_clade$Clade <- gsub("_"," ", ct_COI_corn_clade$Clade)
 
 (clade.graph <- ggplot(ct_COI_corn_clade) + 
   geom_bar(aes(x = reorder(Clade, Rel.abundance, mean), y = Rel.abundance), stat = "identity") + 
@@ -183,7 +185,7 @@ ct_COI_corn_clade <-  ct_COI_corn_clade %>%
   coord_flip() + 
   theme_gray(base_size = 16) + 
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
-        axis.text.y = element_text(size = 18),
+        axis.text.y = element_text(size = 16),
         strip.text = element_text(face = "bold", size = 20)))
 
 
@@ -199,6 +201,7 @@ ct_COI_corn_genus <-  ct_COI_corn_genus %>%
   spread(type, Rel.abundance) %>% 
   top_n(n=12, wt = `COI amplicon`) %>%
   gather(type, Rel.abundance, 2:3)
+ct_COI_corn_genus$Species <- gsub("_"," ", ct_COI_corn_genus$Species)
 
 (species.graph <- ggplot(ct_COI_corn_genus) + 
   geom_bar(aes(x = reorder(Species, Rel.abundance, mean), 

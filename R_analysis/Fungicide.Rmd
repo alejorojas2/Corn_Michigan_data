@@ -1,0 +1,67 @@
+---
+title: "Untitled"
+author: "Alejandro Rojas"
+date: "12/21/2018"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(magrittr)
+library(plyr)
+library(dplyr)
+library(grid)
+library(gridExtra)
+library(knitr)
+library(RColorBrewer)
+library(readr)
+library(here)
+```
+
+```{r}
+
+EC50 <- read.delim(here("data","EC50s_Sets_Pythium.txt"), sep = "\t")
+EC50 <- EC50 %>% filter(RelEC50 < 10^30)
+
+#Summarizing data using different parameters by plyr library
+corn_ec50 <- ddply(EC50, c("species","chem"), summarise,
+              N = length(RelEC50),
+              mean_ec = mean(RelEC50), 
+              sd_ec = sd(RelEC50),
+              se_ec = sd_ec/sqrt(N)
+              )
+  
+#Setting limits for error bars
+ec_limits <- aes(ymax = mean_ec + se_ec, ymin=mean_ec - se_ec)
+
+ethaboxam <- dplyr::filter(corn_ec50, corn_ec50$chem == "ethaboxam")
+mefenoxam <- subset(corn_ec50, corn_ec50$chem == "mefenoxam")
+
+
+(plot_ec <- ggplot(ethaboxam, 
+                   aes(x = reorder(species, mean_ec, mean), 
+                       y = mean_ec)) +
+  geom_bar(stat = "summary", size = 0.5, fill = "#3288bd", colour="black") +
+  geom_errorbar(ec_limits, width=0.2) + coord_cartesian(ylim = c(0, 4)) +
+  theme_gray(base_size = 15) +
+  theme(axis.text.x=element_text(angle=60, hjust = 1, vjust = 1, face="italic"), 
+        axis.text.y=element_text(angle=90, hjust = 0.5), 
+        plot.margin=unit(c(1,1,1,1), "mm")) +
+  labs(x="Species", y = "Relative EC50 (µg/mL)"))
+
+(plot_ec2 <- ggplot(mefenoxam, 
+                   aes(x = reorder(species, mean_ec, mean), 
+                       y = mean_ec)) +
+  geom_bar(stat = "summary", size = 0.5, fill = "#3288bd", colour="black") +
+  geom_errorbar(ec_limits, width=0.2) + coord_cartesian(ylim = c(0, 4)) +
+  theme_gray(base_size = 15) +
+  theme(axis.text.x=element_text(angle=60, hjust = 1, vjust = 1, face="italic"), 
+        axis.text.y=element_text(angle=90, hjust = 0.5), 
+        plot.margin=unit(c(1,1,1,1), "mm")) +
+  labs(x="Species", y = "Relative EC50 (µg/mL)"))
+
+```
+
