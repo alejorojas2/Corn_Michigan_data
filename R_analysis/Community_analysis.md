@@ -310,7 +310,7 @@ Yr_grp <- get_variable(Corn_COI, "Year")
 ## Dissimilarity: bray 
 ## 
 ## ANOSIM statistic R: 0.1128 
-##       Significance: 0.045 
+##       Significance: 0.043 
 ## 
 ## Permutation: free
 ## Number of permutations: 999
@@ -344,7 +344,7 @@ field_grp <- get_variable(Corn_COI, "group")
 df <- as(sample_data(Corn_COI), "data.frame")
 d <- phyloseq::distance(Corn_COI, "bray")
 
-Corn_adonis <- adonis(d ~ Year, df)
+Corn_adonis <- adonis(d ~ Year + Year/group, df)
 
 kable(Corn_adonis$aov.tab, digits = 3, 
       caption = "__Table .__ Comparison of community structure (beta diversity)\
@@ -353,11 +353,12 @@ kable(Corn_adonis$aov.tab, digits = 3,
 
 
 
-|          | Df| SumsOfSqs| MeanSqs| F.Model|    R2| Pr(>F)|
-|:---------|--:|---------:|-------:|-------:|-----:|------:|
-|Year      |  1|     0.791|   0.791|   2.318| 0.076|  0.004|
-|Residuals | 28|     9.561|   0.341|      NA| 0.924|     NA|
-|Total     | 29|    10.353|      NA|      NA| 1.000|     NA|
+|           | Df| SumsOfSqs| MeanSqs| F.Model|    R2| Pr(>F)|
+|:----------|--:|---------:|-------:|-------:|-----:|------:|
+|Year       |  1|     0.791|   0.791|   5.356| 0.076|  0.001|
+|Year:group |  8|     6.606|   0.826|   5.588| 0.638|  0.001|
+|Residuals  | 20|     2.955|   0.148|      NA| 0.285|     NA|
+|Total      | 29|    10.353|      NA|      NA| 1.000|     NA|
 
 
 ### Ordination analysis for culture and amplicon
@@ -469,13 +470,13 @@ Corn seedlings", format = "markdown")
 |OrgMatter       | -0.386|  0.514|             0.413|                 0.001|
 |WC3rdbar        |  0.814|  0.105|             0.673|                 0.001|
 |pHwater         |  0.489| -0.488|             0.478|                 0.001|
-|Db3rdbar        |  0.437| -0.439|             0.383|                 0.002|
-|AWC             | -0.014|  0.587|             0.344|                 0.005|
+|Db3rdbar        |  0.437| -0.439|             0.383|                 0.003|
+|AWC             | -0.014|  0.587|             0.344|                 0.004|
 |CEC7            | -0.322|  0.464|             0.319|                 0.008|
-|Precip_2011     | -0.431|  0.022|             0.186|                 0.066|
-|EC              | -0.001| -0.409|             0.167|                 0.069|
-|Precip_30yr_avg | -0.304| -0.252|             0.156|                 0.117|
-|Precip_2012     |  0.073|  0.074|             0.011|                 0.847|
+|Precip_2011     | -0.431|  0.022|             0.186|                 0.059|
+|EC              | -0.001| -0.409|             0.167|                 0.081|
+|Precip_30yr_avg | -0.304| -0.252|             0.156|                 0.090|
+|Precip_2012     |  0.073|  0.074|             0.011|                 0.846|
 |ECEC            |  0.000|  0.000|             0.000|                 1.000|
 
 ### Results ordination and environmental data

@@ -270,7 +270,7 @@ field_grp <- get_variable(Corn_COI, "group")
 df <- as(sample_data(Corn_COI), "data.frame")
 d <- phyloseq::distance(Corn_COI, "bray")
 
-Corn_adonis <- adonis(d ~ Year, df)
+Corn_adonis <- adonis(d ~ Year + Year/group, df)
 
 kable(Corn_adonis$aov.tab, digits = 3, 
       caption = "__Table .__ Comparison of community structure (beta diversity)\
