@@ -7,8 +7,11 @@ Contents
 1. [Corn production in Michigan and locations sampled](R_analysis/Corn_samples.md)
 2. [Community analysis](R_analysis/Community_analysis.md)
 3. [Pathogenicity and virulence in corn seedlings](R_analysis/Pathogenicity_corn.md)
-4. [Fungicide resistance](R_analysis/)
 
+
+Database for OTU assignment
+===========================
+*  coxI genes and taxonomy files generated based on BOLD (http://www.boldsystems.org/) are available at the folder [COI_reference_files](COI_reference_files/)
 
 Citation
 ========
