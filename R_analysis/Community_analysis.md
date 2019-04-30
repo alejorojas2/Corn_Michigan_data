@@ -42,6 +42,9 @@ Corn_COI <- prune_samples((grepl('MICO', sample_names(CornCOI))), CornCOI)
 #Rename tax ranks to actual names
 colnames(tax_table(Corn_COI)) <- c("Phylum","Class","Order",
                                   "Family","Genus","Clade","Species","Kingdom")
+
+#Remove non-assigned taxa
+Corn_COI <- subset_taxa(Corn_COI, Phylum != "No blast hit")
 ```
 
 
@@ -284,16 +287,16 @@ kable(Tb_richness_final, digits = 3, format = "markdown")
 
 |group   |  N| mean.Observed| sd.Observed| mean.Shannon| sd.Shannon| mean.Simpson| sd.Simpson| mean.Evenness| sd.Evenness|
 |:-------|--:|-------------:|-----------:|------------:|----------:|------------:|----------:|-------------:|-----------:|
-|MICO_2  |  3|       290.333|     106.265|        4.073|      0.187|        0.912|      0.006|         0.725|       0.018|
-|MICO_3  |  3|       385.000|      44.508|        4.254|      0.206|        0.933|      0.011|         0.715|       0.023|
-|MICO_4  |  3|       217.000|      53.842|        3.995|      0.419|        0.931|      0.027|         0.744|       0.053|
-|MICO_5  |  3|       403.667|     145.029|        4.392|      0.151|        0.962|      0.007|         0.740|       0.054|
-|MICO_6  |  3|       232.667|      13.317|        4.475|      0.045|        0.976|      0.002|         0.821|       0.008|
-|MICO2_1 |  3|       480.000|      36.166|        4.648|      0.054|        0.955|      0.007|         0.753|       0.012|
-|MICO2_2 |  3|       284.000|     103.966|        4.309|      0.050|        0.952|      0.021|         0.770|       0.044|
-|MICO2_3 |  3|       315.000|      52.716|        4.901|      0.166|        0.979|      0.007|         0.853|       0.007|
-|MICO2_4 |  3|       413.000|      56.045|        4.734|      0.175|        0.968|      0.016|         0.787|       0.036|
-|MICO2_5 |  3|       615.000|      32.187|        4.973|      0.083|        0.964|      0.005|         0.775|       0.011|
+|MICO_2  |  3|       238.667|      84.240|        3.812|      0.170|        0.871|      0.008|         0.703|       0.020|
+|MICO_3  |  3|       318.333|      38.553|        4.058|      0.302|        0.906|      0.018|         0.704|       0.039|
+|MICO_4  |  3|       154.000|      43.093|        3.782|      0.355|        0.908|      0.033|         0.754|       0.048|
+|MICO_5  |  3|       336.000|     124.527|        4.133|      0.127|        0.949|      0.009|         0.719|       0.056|
+|MICO_6  |  3|       172.333|       6.506|        4.144|      0.031|        0.965|      0.004|         0.805|       0.004|
+|MICO2_1 |  3|       399.000|      44.193|        4.343|      0.107|        0.939|      0.009|         0.726|       0.015|
+|MICO2_2 |  3|       236.667|      99.229|        4.077|      0.008|        0.938|      0.024|         0.756|       0.051|
+|MICO2_3 |  3|       226.333|      37.434|        4.514|      0.189|        0.968|      0.013|         0.834|       0.011|
+|MICO2_4 |  3|       326.333|      61.614|        4.444|      0.228|        0.954|      0.026|         0.770|       0.046|
+|MICO2_5 |  3|       545.000|      25.710|        4.799|      0.106|        0.958|      0.006|         0.762|       0.014|
 
 ### ANOSIM
 
@@ -309,8 +312,8 @@ Yr_grp <- get_variable(Corn_COI, "Year")
 ## anosim(x = phyloseq::distance(Corn_COI, "bray"), grouping = Yr_grp) 
 ## Dissimilarity: bray 
 ## 
-## ANOSIM statistic R: 0.1128 
-##       Significance: 0.043 
+## ANOSIM statistic R: 0.09103 
+##       Significance: 0.048 
 ## 
 ## Permutation: free
 ## Number of permutations: 999
@@ -327,7 +330,7 @@ field_grp <- get_variable(Corn_COI, "group")
 ## anosim(x = phyloseq::distance(Corn_COI, "bray"), grouping = field_grp) 
 ## Dissimilarity: bray 
 ## 
-## ANOSIM statistic R: 0.9969 
+## ANOSIM statistic R: 0.9893 
 ##       Significance: 0.001 
 ## 
 ## Permutation: free
@@ -355,10 +358,10 @@ kable(Corn_adonis$aov.tab, digits = 3,
 
 |           | Df| SumsOfSqs| MeanSqs| F.Model|    R2| Pr(>F)|
 |:----------|--:|---------:|-------:|-------:|-----:|------:|
-|Year       |  1|     0.791|   0.791|   5.356| 0.076|  0.001|
-|Year:group |  8|     6.606|   0.826|   5.588| 0.638|  0.001|
-|Residuals  | 20|     2.955|   0.148|      NA| 0.285|     NA|
-|Total      | 29|    10.353|      NA|      NA| 1.000|     NA|
+|Year       |  1|     0.761|   0.761|   5.038| 0.073|  0.001|
+|Year:group |  8|     6.576|   0.822|   5.440| 0.635|  0.001|
+|Residuals  | 20|     3.022|   0.151|      NA| 0.292|     NA|
+|Total      | 29|    10.359|      NA|      NA| 1.000|     NA|
 
 
 ### Ordination analysis for culture and amplicon
@@ -466,17 +469,17 @@ Corn seedlings", format = "markdown")
 
 |Env.var         | Axis.1| Axis.2| Oom_env.vectors.r| Oom_env.vectors.pvals|
 |:---------------|------:|------:|-----------------:|---------------------:|
-|Clay            |  0.702|  0.016|             0.494|                 0.001|
-|OrgMatter       | -0.386|  0.514|             0.413|                 0.001|
-|WC3rdbar        |  0.814|  0.105|             0.673|                 0.001|
-|pHwater         |  0.489| -0.488|             0.478|                 0.001|
-|Db3rdbar        |  0.437| -0.439|             0.383|                 0.003|
-|AWC             | -0.014|  0.587|             0.344|                 0.004|
-|CEC7            | -0.322|  0.464|             0.319|                 0.008|
-|Precip_2011     | -0.431|  0.022|             0.186|                 0.059|
-|EC              | -0.001| -0.409|             0.167|                 0.081|
-|Precip_30yr_avg | -0.304| -0.252|             0.156|                 0.090|
-|Precip_2012     |  0.073|  0.074|             0.011|                 0.846|
+|OrgMatter       | -0.408|  0.551|             0.471|                 0.001|
+|WC3rdbar        |  0.811|  0.153|             0.682|                 0.001|
+|pHwater         |  0.513| -0.541|             0.557|                 0.001|
+|Clay            |  0.727|  0.101|             0.539|                 0.002|
+|Db3rdbar        |  0.458| -0.427|             0.392|                 0.003|
+|CEC7            | -0.340|  0.517|             0.383|                 0.004|
+|AWC             | -0.041|  0.527|             0.280|                 0.016|
+|EC              |  0.027| -0.482|             0.233|                 0.025|
+|Precip_2011     | -0.450|  0.100|             0.212|                 0.038|
+|Precip_2012     |  0.074|  0.386|             0.154|                 0.114|
+|Precip_30yr_avg | -0.296|  0.150|             0.110|                 0.192|
 |ECEC            |  0.000|  0.000|             0.000|                 1.000|
 
 ### Results ordination and environmental data
@@ -494,7 +497,9 @@ fit_plot <- as.data.frame(scores(Oom_env, display = "vectors")) %>%
 fit_plot$Env.var2 <- c("Clay (%)","Organic matter (%)", "Water content",
                        "Soil pH","Bulk density (g/cm^3)",
                        "CEC (meq/100g soil)",
-                       "Avail. water capacity (cm water/cm soil)")
+                       "Avail. water capacity (cm water/cm soil)",
+                       "EC (dS/m)",
+                       "Precipitation (mm)")
 
 ord_plot.data <- plot_ordination(Corn_COI_top100, Oom_biom_ord2, 
                             color = "group", shape = "Year", justDF = TRUE)

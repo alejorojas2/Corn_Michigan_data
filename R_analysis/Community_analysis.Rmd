@@ -45,6 +45,9 @@ Corn_COI <- prune_samples((grepl('MICO', sample_names(CornCOI))), CornCOI)
 #Rename tax ranks to actual names
 colnames(tax_table(Corn_COI)) <- c("Phylum","Class","Order",
                                   "Family","Genus","Clade","Species","Kingdom")
+
+#Remove non-assigned taxa
+Corn_COI <- subset_taxa(Corn_COI, Phylum != "No blast hit")
 ```
 
 
@@ -367,7 +370,9 @@ fit_plot <- as.data.frame(scores(Oom_env, display = "vectors")) %>%
 fit_plot$Env.var2 <- c("Clay (%)","Organic matter (%)", "Water content",
                        "Soil pH","Bulk density (g/cm^3)",
                        "CEC (meq/100g soil)",
-                       "Avail. water capacity (cm water/cm soil)")
+                       "Avail. water capacity (cm water/cm soil)",
+                       "EC (dS/m)",
+                       "Precipitation (mm)")
 
 ord_plot.data <- plot_ordination(Corn_COI_top100, Oom_biom_ord2, 
                             color = "group", shape = "Year", justDF = TRUE)
